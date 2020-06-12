@@ -2,6 +2,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 
+// FUNCTION TO SIGNUP //
 exports.signup = (req, res) => {
     const user = new User(req.body)
     user.save((err, user) => {
@@ -19,6 +20,7 @@ exports.signup = (req, res) => {
     })  
 };
 
+// FUNCTION TO SIGNIN //
 exports.signin = (req, res) => {
     const {email, password} = req.body;
      User.findOne({email}, (err, user)=>{
@@ -43,6 +45,7 @@ exports.signin = (req, res) => {
     });
 };
 
+// FUNCTION TO SIGNOUT //
 exports.signout = (req, res) => {
     res.clearCookie("token");
     res.json({
@@ -50,11 +53,13 @@ exports.signout = (req, res) => {
     })
 }
 
+// FUNCTION TO CHECK IS SIGNEDIN USING EXPRESSJWT //
 exports.isSignedIn = expressJwt({
   secret: process.env.SECRET,
   userProperty: "auth",
 });
 
+// MIDDLEWARE FOR ISAUTHENTICATE //
 exports.isAuthenticate = (req, res, next) => {
     let checker = req.profile && req.auth && req.profile._id == req.auth._id;
     if (!checker) {
@@ -65,6 +70,7 @@ exports.isAuthenticate = (req, res, next) => {
     next();
 };
 
+// MIDDLE FOR ISADMIN //
 exports.isAdmin = (req, res, next) => {
     if(req.profile.role === 0){
         return res.status(403).json({
@@ -74,6 +80,7 @@ exports.isAdmin = (req, res, next) => {
     next();
 }
 
+// MIDDLEWARE FOR ISSUPERADMIN //
 exports.isSuperAdmin = (req, res, next) => {
     if (req.profile.role === 2) {
         return res.status(403).json({

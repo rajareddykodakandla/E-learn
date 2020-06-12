@@ -4,6 +4,7 @@ const formidable = require("formidable");
 const _ = require("lodash");
 const fs = require("fs");
 
+// FUNCTION TO GET USERID //
 exports.getUserById = (req, res, next, id) => {
     User.findById(id).exec((err, user) => {
         if (err || !user) {
@@ -16,6 +17,7 @@ exports.getUserById = (req, res, next, id) => {
     })
 };
 
+// FUNCTION TO GET VIDEOID //
 exports.getVideoById = (req, res, next, id) => {
     Video.findById(id).exec((err, video) => {
         if(err){
@@ -28,6 +30,7 @@ exports.getVideoById = (req, res, next, id) => {
     }) 
 };
 
+// FUNCTION TO CREATE VIDEO //
 exports.createVideo = (req, res) => {
     let form = formidable.IncomingForm();
     form.keepExtensions = true;
@@ -64,11 +67,13 @@ exports.createVideo = (req, res) => {
     })
 }
 
+// FUNCTION TO GET VIDEO INFO //
 exports.getVideo = (req, res) => {
     req.myvideo.video = undefined;
     return res.json(req.myvideo);
 }
 
+// FUNCTION TO GET THE VIDEO //
 exports.video = (req, res, next) => {
     if(req.myvideo.video.data){
         res.set("content-Type", req.myvideo.video.contentType);
@@ -77,6 +82,7 @@ exports.video = (req, res, next) => {
     next();
 }
 
+// FUNCTION TO UPDATE VIDEO //
 exports.updateVideo = (req, res) => {
     let form = formidable.IncomingForm();
     form.keepExtensions = true;
@@ -124,6 +130,7 @@ exports.updateVideo = (req, res) => {
     })
 }
 
+// FUNCTION TO REMOVE THE VIDEO //
 exports.removeVideo = (req, res) => {
     let video = req.myvideo;
     video.remove((err, deletedvideo) => {
@@ -138,6 +145,7 @@ exports.removeVideo = (req, res) => {
     })
 };
 
+// FUNCTION TO GET ALLINSTRUCTORS 
 exports.getAllInstructors = (req, res) => {
     Video.distinct("instructor", {}, (err, videos) => {
         if(err){
@@ -149,6 +157,7 @@ exports.getAllInstructors = (req, res) => {
     })
 }
 
+// FUNCTION TO GET VIDEO BY INSTRUCTORID //
 exports.getVideosByInstructor = (req, res) => {
      Video.find({instructor: req.profile._id}).populate('_id').exec((err, video) => {
          if (err) {
@@ -160,18 +169,16 @@ exports.getVideosByInstructor = (req, res) => {
     })
 }
 
-// exports.videoUpdateAuth = (req, res, next) => {
-//     if (req.profile._id == req.myvideo.idforupdate) {
-//         return res.send("You can update this video");
-//     } else {
-//         res.json({
-//             userid: req.profile._id,
-//             instid: req.myvideo.instructor,
-//             message: "You are not authorized to update this video"
-//         });
-//     }
-//     next();
-// }
-//5edde9f9fc7a5328586e1f52
-//5eddea52fc7a5328586e1f54
-//5edf4c9d3f3b0a2d48374fe1
+// FOR TESTING //
+exports.videoUpdateAuth = (req, res, next) => {
+    if (req.profile._id == req.myvideo.idforupdate) {
+        return res.send("You can update this video");
+    } else {
+        res.json({
+            userid: req.profile._id,
+            instid: req.myvideo.instructor,
+            message: "You are not authorized to update this video"
+        });
+    }
+    next();
+}

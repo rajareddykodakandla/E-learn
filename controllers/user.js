@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const crypto = require('crypto');
 
+// FUNCTION TO GET USERID //
 exports.getUserById = (req, res, next, id) => {
     User.findById(id).exec((err, user) => {
         if(err || !user){
@@ -13,12 +14,14 @@ exports.getUserById = (req, res, next, id) => {
     })
 };
 
+// FUNCTION TO GET USER //
 exports.getUser = (req, res) => {
     req.profile.salt = undefined; 
     req.profile.secure_password = undefined; 
     return res.json(req.profile);
 }
 
+// FUNCTION TO UPDATE USER INFO EXCEPT PASSWORD//
 exports.updateUser = (req, res) => {
     User.findByIdAndUpdate(
         { _id: req.profile._id },
@@ -38,6 +41,7 @@ exports.updateUser = (req, res) => {
     );
 }
 
+// FUNCTION TO GET ALL USERS //
 exports.getAllUsers = (req, res) => {
     User.find().exec((err, user) => {
         if(err || !user){
@@ -49,19 +53,11 @@ exports.getAllUsers = (req, res) => {
     });
 };
 
+// FUNCTION TO UPDATE PASSWORD //
 exports.updatePassword = (req, res) => {
     const {password} = req.body;
     salt = req.profile.salt;
     update = updatepass(password);
-    // securepassindb = req.profile.secure_password;
-    // if(update){
-    //      res.json({
-    //         updatedpassword: update,
-    //         //oldpass: securepassindb,
-    //     });
-    // }else{
-    //     res.send("no password")
-    // }
     function updatepass(plainpassword) {
         if (!plainpassword) return "";
         try {
